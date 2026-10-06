@@ -22,7 +22,11 @@ translates between the mesh and the Perplexity API. Internal use (Arena Hub v1).
    every 2s, TTL 6s (bucket default). Status: `idle` / `working` / `offline`.
 6. **Beads:** `/claim <id>` and `/release <id>` messages run `bd claim` /
    `bd release` in `BEADS_DIR` and report the result to the mesh. Beads is the
-   source of truth; the connector keeps no claim registry.
+   source of truth; the connector keeps no claim registry. **E2E-untested:**
+   the `bd` CLI is not installed on this host, so the live path cannot be
+   exercised here — command parsing is unit-tested (`test/commands.test.js`,
+   11/11) and the graceful "bd CLI not installed" degradation was verified
+   manually against the mesh (see `test/evidence-2026-10-06.md`).
 
 ## Honest limitations
 
