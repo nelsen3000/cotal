@@ -1,0 +1,8 @@
+Apache License 2.0 — connector-muse (Arena Hub v1, internal).
+
+This package is internal to the Arena Hub v1 program. It is licensed under
+the Apache License, Version 2.0; you may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+All runtime dependencies (@nats-io/*, nkeys.js) are Apache-2.0.
