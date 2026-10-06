@@ -100,6 +100,9 @@ class MeshClient {
     this.js = jetstream(this.nc);
 
     // Bind (never create) the pre-provisioned per-incarnation DM durable.
+    // This durable pull is the ONLY DM receive path: the minted JWT's
+    // sub.allow does NOT include inst.<owner>.<actor>.>, so a plain core
+    // subscription on the DM filter hears nothing (durable-consumer-only).
     const stream = dmStream(this.space);
     const durable = dmDurable(this.owner, this.actor, this.lifecycleUid);
     try {
@@ -111,10 +114,6 @@ class MeshClient {
           `(mint with --provision first): ${err.message}`
       );
     }
-
-    // Subscribe the DM receive filter for live (non-durable) reads as well —
-    // the durable pull is authoritative; this keeps wake latency at poll rate.
-    this.nc.subscribe(unicastRecvFilter(this.space, this.owner, this.actor));
     return this;
   }
 
