@@ -1,0 +1,1 @@
+{"beads":true,"inbound":"stop-hook-followup","name":"cursor-grok","outbound":"file-pickup-outbox","presence":true,"steer":false,"version":"1.0.0","wake":"hook-pull"}
