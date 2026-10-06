@@ -1,5 +1,28 @@
 # @cotal-ai/auth
 
+## 0.69.0
+
+### Patch Changes
+
+- c55b463: An auth-service context started by the CLI composition no longer carries a made-up hosted context. The shared builder gave every handle a `readiness()` and, with no assigned context, reported the store's data account with an empty lifecycle UID, a key no assignment names and `startAuthService` itself refuses. Only `startAuthService` now attaches `readiness()`, and it reports the context it was assigned.
+- 886c3e5: The managed-agent host doors (enrollment, prepare-retirement, and runtime create and status) now run one current-registration check instead of three hand-kept copies of the open gate, serve principal, serve epoch, and registration proof checks. The order and codes are unchanged. An enrollment refused for an absent or frozen gate now reads `enrollment found no current open manager gate for instance <id>`.
+- 426d72e: The issuing host now admits a run that a signerless manager forwards only if it saw the caller publish that `run-start` request on the broker, and only once. Before, it checked the forwarded subject's caller against live issuance and its publish ceiling, so a registered manager could get an admission, and then driver and mediator credentials, for any live caller whose ceiling permits `run-start` on it without that caller asking. The host's issuer connection now also watches the `run-start` request subjects on both manager routes, read-only, the way it already watched `run-resume` and `run-answer`. A forward it did not observe, or a second forward of one it did, is refused as `permission-denied`. The manager's request is unchanged.
+- 93716c3: The loopback check that lets plain http carry a credential now has one definition, `isLoopbackLiteral` in `@cotal-ai/core`. `agent-bearer --exchange-url`, the pinned exchange, enrollment redeem, the managed handoff reader and workspace `isLoopbackHost` all call it, so a fix to the rule can no longer reach only some of them. It parses the address, so every IPv6 spelling of `::1` is loopback and a dotted host that is not an IPv4 literal, such as `127.0.0.09`, is not. `isLoopbackHost` keeps only the legacy IPv4 canonicalization a `nats://` host needs.
+- Updated dependencies [1bdc7f2]
+- Updated dependencies [94996e5]
+- Updated dependencies [69232cd]
+- Updated dependencies [93716c3]
+- Updated dependencies [3a1716d]
+- Updated dependencies [9772fd4]
+- Updated dependencies [adab793]
+- Updated dependencies [539266a]
+- Updated dependencies [0c5b205]
+- Updated dependencies [98d2b41]
+- Updated dependencies [f409b46]
+  - @cotal-ai/lang@0.69.0
+  - @cotal-ai/core@0.69.0
+  - @cotal-ai/workspace@0.69.0
+
 ## 0.68.0
 
 ### Minor Changes

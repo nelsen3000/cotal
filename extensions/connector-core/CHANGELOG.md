@@ -1,5 +1,14 @@
 # @cotal-ai/connector-core
 
+## 0.69.0
+
+### Patch Changes
+
+- adab793: Resolve an agent's read list through one core function, `resolveReadAcl`, at every site: the persona loader, the session config, the manager launch, foreground `cotal spawn` and its user-mode grant, `cotal mint` and the manifest persona merge. An explicit empty `allowSubscribe` now reads `subscribe` everywhere, as an omitted one does. Before, the session refused a persona the loader had accepted. The manager also granted and recorded an empty read list while the provisioner recorded `subscribe`.
+- 64110e0: `docs/UPGRADING.md`, which `cotal_docs` serves, now heads the `--share-tools` section with 0.69.0, the release that first carries that change; 0.68.0 was cut before it merged. The page's guidance on writing a section now says to name the next version Changesets publishes, to move the heading when a release is cut while the change is open, and to check the headings added since the previous tag before merging a release pull request. No behavior changes.
+- 98d2b41: Resolve a spawn's harness through one shared rule. Foreground `cotal spawn`, the detached `--resume` carry and the manager's `start` now all call `resolveAgentType` in `@cotal-ai/workspace` (`--agent`, then the persona's `agent:` pin, then a detached caller's default, then `COTAL_DEFAULT_AGENT`, then the product default). The foreground path no longer spells the product default as its own literal, so it can no longer pick a different harness than a detached spawn of the same persona. Behavior is unchanged while the product default stays `claude`.
+- 6540a32: The architecture and control-surface pages, which ship in the bundled docs, and several source comments described spawn auto-numbering as `reviewer-2`. They now spell the series with `_` (`reviewer_2`, `reviewer_3`), the separator the manager and `cotal spawn` use. The control-surface spawn accept example shows `reviewer_2` as both the allocated name and the user-mode actor. No behavior changes.
+
 ## 0.68.0
 
 ### Minor Changes

@@ -1,5 +1,34 @@
 # @cotal-ai/manager
 
+## 0.69.0
+
+### Minor Changes
+
+- 8c01391: The manager carries an agent's MCP server selection as a list instead of the `--share-tools` flag string. The CLI parses `--share-tools` once and sends the list, so the `spawn` operation's `shareTools` input is now an array of server names and the manager cluster document moves to revision 22. A `supervise --roster` entry's `share-tools:` list is used as written, so a declared server named `none`, or one whose name contains a comma, now loads and is shared instead of refusing the roster. Preserved-state inventories are written as `cotal-manager-resume/v2`; a v1 inventory from an earlier release still resumes.
+
+### Patch Changes
+
+- 6295b1a: `startAgent` documents its `provisioned` rollback variable once. The older three-line comment above it described only the static footprint and repeated the paragraph that follows, which also covers the user-mode grant and the custody reference. No behavior changes.
+- 189cb2a: The manager's delivery-admin evictor, family evictor and freeze-holder liveness probe now open their one-call connections through one helper, `withScopedEndpoint`, which mints the 60 second credential and builds the endpoint that never joins presence, consumes or watches a channel. Before, four call sites spelled out that lifecycle by hand, so a copy that dropped its explicit lifetime would have minted an `observer` credential with no expiry and still typechecked. Shipped behaviour is unchanged.
+- b9d2902: The manager now decides whether a durable static slot row belongs to a sibling manager instance through one shared rule. `inspect`, `slots`, startup reconcile, the boot sweep and the resume orphan check each spelled that rule inline, so a change at one site could make them disagree about which instance owns a row while the boot sweep terminalizes the rows it believes are its own. Behavior is unchanged.
+- 8e16774: The manager now runs its event-plane and static `endpointCapabilities` spawn refusals before it allocates the agent's name, and reserves the name right before the step whose cleanup releases it. Each of those refusals, and the user-mode provisioning error, used to give the reserved name back by hand, so a refusal added there that forgot the release would silently cost the next spawn of that persona its name. When a hard-pinned `--name` collision and one of these refusals both apply, the spawn now reports the event-plane or capability refusal.
+- 0b47df3: The manager's teardown chain (`trackDeprovision`, `deprovision`, `driveDeprovision`) and `startAgent`'s spawn-rollback value now share one named `TeardownTarget` type in place of four inline copies of the same object shape. A field the chain needs is declared once, so a copy can no longer fall behind unnoticed when a hop passes the value on as a variable. No behavior changes.
+- adab793: Resolve an agent's read list through one core function, `resolveReadAcl`, at every site: the persona loader, the session config, the manager launch, foreground `cotal spawn` and its user-mode grant, `cotal mint` and the manifest persona merge. An explicit empty `allowSubscribe` now reads `subscribe` everywhere, as an omitted one does. Before, the session refused a persona the loader had accepted. The manager also granted and recorded an empty read list while the provisioner recorded `subscribe`.
+- 561232d: `remoteManagerClient.remoteRunHosting` builds the four signerless run callbacks (`admitRun`, `issueAttempt`, `issueOperator`, `renewRun`) from a manager's registration and a caller-supplied transport. `cotal supervise` and the remote continuity suites now both use it. The suites used to spell the four run requests a second time, so a change to the shipped requests could not fail them. Behavior is unchanged.
+- 98d2b41: Resolve a spawn's harness through one shared rule. Foreground `cotal spawn`, the detached `--resume` carry and the manager's `start` now all call `resolveAgentType` in `@cotal-ai/workspace` (`--agent`, then the persona's `agent:` pin, then a detached caller's default, then `COTAL_DEFAULT_AGENT`, then the product default). The foreground path no longer spells the product default as its own literal, so it can no longer pick a different harness than a detached spawn of the same persona. Behavior is unchanged while the product default stays `claude`.
+- 6540a32: The architecture and control-surface pages, which ship in the bundled docs, and several source comments described spawn auto-numbering as `reviewer-2`. They now spell the series with `_` (`reviewer_2`, `reviewer_3`), the separator the manager and `cotal spawn` use. The control-surface spawn accept example shows `reviewer_2` as both the allocated name and the user-mode actor. No behavior changes.
+- Updated dependencies [69232cd]
+- Updated dependencies [93716c3]
+- Updated dependencies [3a1716d]
+- Updated dependencies [9772fd4]
+- Updated dependencies [adab793]
+- Updated dependencies [539266a]
+- Updated dependencies [0c5b205]
+- Updated dependencies [98d2b41]
+  - @cotal-ai/core@0.69.0
+  - @cotal-ai/workspace@0.69.0
+  - @cotal-ai/seat@0.69.0
+
 ## 0.68.0
 
 ### Minor Changes

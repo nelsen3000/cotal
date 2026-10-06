@@ -1,5 +1,16 @@
 # @cotal-ai/core
 
+## 0.69.0
+
+### Patch Changes
+
+- 69232cd: The membership watch callback no longer builds a KV watch entry for every feed message and then discards it. `onChange` takes no argument, so the per-message entry and the replay countdown behind it were never read. `watchMembership` still calls `onChange` once per entry, initial replay included.
+- 93716c3: The loopback check that lets plain http carry a credential now has one definition, `isLoopbackLiteral` in `@cotal-ai/core`. `agent-bearer --exchange-url`, the pinned exchange, enrollment redeem, the managed handoff reader and workspace `isLoopbackHost` all call it, so a fix to the rule can no longer reach only some of them. It parses the address, so every IPv6 spelling of `::1` is loopback and a dotted host that is not an IPv4 literal, such as `127.0.0.09`, is not. `isLoopbackHost` keeps only the legacy IPv4 canonicalization a `nats://` host needs.
+- 9772fd4: A presence-watch rebind now decides whether the bucket is empty from the typed consumer info the bind already reads. It used to reach the pending count through an optional-chained cast over private nats.js fields, so a client release that renamed one of them would have left the count undefined and skipped the empty-bucket handling without any error: a non-registering observer's view went stale again every liveness window, and a registering observer never re-published its own record.
+- adab793: Resolve an agent's read list through one core function, `resolveReadAcl`, at every site: the persona loader, the session config, the manager launch, foreground `cotal spawn` and its user-mode grant, `cotal mint` and the manifest persona merge. An explicit empty `allowSubscribe` now reads `subscribe` everywhere, as an omitted one does. Before, the session refused a persona the loader had accepted. The manager also granted and recorded an empty read list while the provisioner recorded `subscribe`.
+- 539266a: `CotalEndpoint` no longer emits an `error` event for a publish denial that the broker already returned to a request. nats.js rejects the request with the denial and also reports the same denial on the connection status, so a call that handled it as its result still produced an `error`, and an endpoint with no `error` listener crashed. An observer's `dmHistory()` returned `[]` and then took down a host with no listener. Refused subscriptions and refused publishes that no request was waiting on are still emitted.
+- 0c5b205: `cotal run start`, `resume`, `ps`, `journal` and `answer` now re-describe and re-issue an unpinned manager call that a sibling manager refused before running it, up to the same 16 attempts the CLI's manager commands use. Before, one such refusal ended the command, so in a space with two managers about half of these calls failed with a refusal saying the command was not run. A hosted run's own manager calls now use that bound too instead of 8. The repair is one core helper, `invokeRepairingSplit`, which the CLI and the runtime both call.
+
 ## 0.68.0
 
 ### Minor Changes

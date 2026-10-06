@@ -1,5 +1,21 @@
 # @cotal-ai/delivery
 
+## 0.69.0
+
+### Patch Changes
+
+- cd45352: `docs/delivery-daemon.md` now describes the broker watch the delivery daemon runs. It no longer says a two-second authenticated broker probe is the active watch; after its start-up reachability check the daemon opens no other connection to check the broker. The page names the disconnect that starts the clock, the window (`COTAL_DELIVERY_BROKER_GONE_MS`, 15 seconds by default) that credits time the daemon itself was stalled, the absolute backstop (`COTAL_DELIVERY_BROKER_GONE_BACKSTOP_MS`, four times the window by default), the exit line each one logs, and how an expired credential is handled. No behavior changes.
+- Updated dependencies [69232cd]
+- Updated dependencies [93716c3]
+- Updated dependencies [3a1716d]
+- Updated dependencies [9772fd4]
+- Updated dependencies [adab793]
+- Updated dependencies [539266a]
+- Updated dependencies [0c5b205]
+- Updated dependencies [98d2b41]
+  - @cotal-ai/core@0.69.0
+  - @cotal-ai/workspace@0.69.0
+
 ## 0.68.0
 
 ### Patch Changes

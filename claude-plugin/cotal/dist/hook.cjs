@@ -26467,6 +26467,12 @@ var import_transport_node19 = __toESM(require_transport_node(), 1);
 var import_jetstream18 = __toESM(require_mod4(), 1);
 var import_kv9 = __toESM(require_mod6(), 1);
 
+// ../../packages/core/dist/loopback.js
+var import_node_net = require("node:net");
+var LOOPBACK = new import_node_net.BlockList();
+LOOPBACK.addSubnet("127.0.0.0", 8, "ipv4");
+LOOPBACK.addAddress("::1", "ipv6");
+
 // ../../packages/core/dist/managed-handoff.js
 var TARGET_FIELDS = ["space", "owner", "actor", "lifecycleUid"];
 var STRING_FIELDS = [...TARGET_FIELDS, "kind", "server", "authProvider", "exchangeUrl", "sentinelCreds", "actorToken"];
@@ -41312,7 +41318,7 @@ var HANDOFF_RECEIPT = '{"handoff":"ok"}\n';
 var MAX_FRAME_BYTES = 1 << 20;
 
 // ../connector-core/dist/relay.js
-var import_node_net = require("node:net");
+var import_node_net2 = require("node:net");
 var TIMEOUT_MS = 2e3;
 var CONNECT_RETRY_INITIAL_MS = 25;
 var CONNECT_RETRY_MAX_MS = 250;
@@ -41421,7 +41427,7 @@ async function runHookRelay() {
   const dial = () => {
     if (settled)
       return;
-    const candidate = (0, import_node_net.connect)(path);
+    const candidate = (0, import_node_net2.connect)(path);
     sock = candidate;
     let connected = false;
     let reply = "";
