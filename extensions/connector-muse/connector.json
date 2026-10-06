@@ -1,0 +1,1 @@
+{"beads":true,"inbound":"poll-file-drop","name":"muse","outbound":"poll-file-pickup","presence":true,"steer":false,"version":"1.0.0","wake":"none"}
