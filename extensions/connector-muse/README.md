@@ -104,3 +104,23 @@ only credential-adjacent value, and the file itself is 0600.
 roster visibility, DM → `inbox/<id>.md` with correct headers, outbox file →
 DM with `replyTo` + move to `sent/`, offline replay across a restart, and
 malformed-file quarantine. Run: `npm test` with the env it documents at the top.
+
+Test notes:
+- The `/claim` path is E2E-tested with a **stub `bd` on PATH** (the real
+  beads CLI is not installed on the test host): the stub echoes a plausible
+  result, and the test asserts the connector shells out and posts the result
+  back to the mesh with `replyTo` set. Not yet verified against real `bd`.
+- The NATS client is the maintained v3 line (`@nats-io/transport-node`,
+  `@nats-io/jetstream`, `@nats-io/kv`, all Apache-2.0) rather than the
+  deprecated `nats@2.29.3` meta-package: 2.29.3 was checked and also lacks a
+  `credsFile` connect option, so the switch would not remove any workaround,
+  and the v3 implementation passes the full integration suite. Three v3
+  gotchas are handled explicitly in `src/mesh.js`: the authenticator is built
+  from the creds file bytes (`credsFile` is silently ignored), `inboxPrefix`
+  is set to `_INBOX_<nkey>` to match the minted grant, and the presence KV
+  key is the principal dot-form `owner.actor` (the exact granted key).
+- DM receive is durable-consumer-only: the minted JWT's `sub.allow` does not
+  include the DM filter, so the connector binds the pre-provisioned
+  `dm_<owner>-<actor>-<uid>` durable and never relies on a core subscription
+  for DMs. Inbound pulls use bounded `fetch({max_messages, expires})`, never
+  the never-terminating `consume()` loop.
