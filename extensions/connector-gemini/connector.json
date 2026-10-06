@@ -1,0 +1,1 @@
+{"beads":true,"inbound":"poll-api-roundtrip","name":"gemini","outbound":"api-reply-publish","presence":true,"steer":false,"version":"1.0.0","wake":"none"}
