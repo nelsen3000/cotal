@@ -24,11 +24,11 @@
 
 "use strict";
 
-const { execFileSync } = require("child_process");
 const crypto = require("crypto");
 const fs = require("fs");
 const { connect, headers, JSONCodec, StringCodec } = require("nats");
 const { parseCredsFile, credsAuthFromFile } = require("./creds");
+const { parseCommand, runBeads } = require("./commands");
 const { clientFromEnv } = require("./perplexity-client");
 
 const jc = JSONCodec();
@@ -176,24 +176,7 @@ function makeReply(to, text, replyTo) {
 
 // --- Beads: /claim + /release. Beads is the source of truth; the connector
 // only surfaces the intent and reports the result back to the mesh.
-const CMD_RE = /^\/(claim|release)\s+(\S+)/i;
-function runBeads(op, taskId) {
-  try {
-    const out = execFileSync("bd", [op === "claim" ? "claim" : "release", taskId], {
-      cwd: CONFIG.beadsDir,
-      timeout: 15000,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-    return { ok: true, output: (out || "").trim() || `${op} ${taskId}: done` };
-  } catch (e) {
-    const hint = e.code === "ENOENT" ? " (bd CLI not installed here)" : "";
-    return {
-      ok: false,
-      output: `beads ${op} ${taskId} failed${hint}: ${(e.stderr || e.message || "").toString().slice(0, 400)}`,
-    };
-  }
-}
+// (Parsing + exec live in src/commands.js so they are unit-testable.)
 
 async function setStatus(s) {
   status = s;
@@ -226,11 +209,11 @@ async function pollTick() {
   // 1. Beads commands never go to the model — they go to `bd`.
   const rest = [];
   for (const item of pending.splice(0)) {
-    const m = item.text.trim().match(CMD_RE);
-    if (m) {
-      const [, op, taskId] = m;
+    const cmd = parseCommand(item.text);
+    if (cmd) {
+      const { op, taskId } = cmd;
       log(`beads ${op} ${taskId} from ${item.from.owner}.${item.from.actor}`);
-      const res = runBeads(op.toLowerCase(), taskId);
+      const res = runBeads(op, taskId, { beadsDir: CONFIG.beadsDir });
       const replyText = res.ok
         ? `beads: ${res.output}`
         : `beads: REJECTED — ${res.output}`;
