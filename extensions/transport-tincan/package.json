@@ -1,0 +1,1 @@
+{"description":"Adapter spec for a tincan (Tailscale dial-out relay) second transport binding: contract capability mapping, identity notes, ops runbook.","name":"@cotal-ai/transport-tincan","scripts":{"smoke":"tsx smoke/tincan-contract.smoke.ts"},"type":"module","version":"0.1.0"}
