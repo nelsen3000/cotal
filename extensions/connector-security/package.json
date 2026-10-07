@@ -1,0 +1,1 @@
+{"description":"ADR-adapted security observability for the Arena Hub agent fleet: normalized agent telemetry schema plus ADR-Bench evaluation checklist.","name":"@cotal-ai/connector-security","scripts":{"smoke":"tsx smoke/security-schema.smoke.ts"},"type":"module","version":"0.1.0"}
